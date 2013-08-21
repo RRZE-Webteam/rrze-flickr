@@ -1,0 +1,84 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: RRZE-Flickr\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-08-21 16:18+0100\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: RRZE-Webteam\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _n:1,2;_nx:1,2;__;_e;_ex\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../rrze-flickr.php:72
+#, php-format
+msgid ""
+"Ihre PHP-Version %s ist veraltet. Bitte aktualisieren Sie mindestens auf die "
+"PHP-Version %s."
+msgstr ""
+"Your server is running PHP version %s. Please upgrade at least to PHP "
+"version %s."
+
+#: ../rrze-flickr.php:76
+#, php-format
+msgid ""
+"Ihre Wordpress-Version %s ist veraltet. Bitte aktualisieren Sie mindestens "
+"auf die Wordpress-Version %s."
+msgstr ""
+"Your Wordpress version is %s. Please upgrade at least to Wordpress version "
+"%s."
+
+#: ../rrze-flickr.php:108
+msgid "Flickr"
+msgstr "Flickr"
+
+#: ../rrze-flickr.php:116
+msgid "Einstellungen &rsaquo; Flickr"
+msgstr "Settings &rsaquo; Flickr"
+
+#: ../rrze-flickr.php:136
+msgid "API-Schlüssel"
+msgstr "API key"
+
+#: ../rrze-flickr.php:219
+msgid "Es wurde keine Bilder gefunden."
+msgstr "No images found."
+
+#: ../rrze-flickr.php:223
+msgid "API-Schlüssel fehlt."
+msgstr "API key is missing."
+
+#: ../rrze-flickr.php:238
+msgid "Bilder von Flickr"
+msgstr "Images from Flickr"
+
+#: ../rrze-flickr.php:241
+msgid "Bilder von Flickr anzeigen"
+msgstr "View images from Flickr"
+
+#: ../rrze-flickr.php:293
+msgid "Titel:"
+msgstr "Title:"
+
+#: ../rrze-flickr.php:298
+msgid "Flickr-Benutzername: "
+msgstr "Flickr user:"
+
+#: ../rrze-flickr.php:303
+msgid "Schlagworte: "
+msgstr "Tags:"
+
+#: ../rrze-flickr.php:305
+msgid "Trenne Schlagwörter durch Kommas."
+msgstr "Separate tags with commas."
+
+#: ../rrze-flickr.php:309
+msgid "Anzahl der Bilder, die angezeigt werden: "
+msgstr "Number of images to show:"
