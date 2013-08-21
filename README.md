@@ -7,7 +7,7 @@ Eine API-Schlüssel ist erforderlich, um auf die Flickr-API zugreifen zu können
 
 Einstellungsmenü: Einstellungen › Flickr
 
-Widgetsmenü: Design > Widgets
+Widgetsmenü: Design › Widgets
 
 Shortcode: 
 - [flickr screen_name="webkongress"]
