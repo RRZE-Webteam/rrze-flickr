@@ -10,7 +10,7 @@ Einstellungsmenü: Einstellungen › Flickr
 Widgetsmenü: Design > Widgets
 
 Shortcode: 
-   [flickr screen_name="webkongress"]
-   [flickr tags="wke2014"]
-   [flickr tags="wke2014" number="8"]
-   [flickr tags="wke2014" number="16" size="s"]
+- [flickr screen_name="webkongress"]
+- [flickr tags="wke2014"]
+- [flickr tags="wke2014" number="8"]
+- [flickr tags="wke2014" number="16" size="s"]
