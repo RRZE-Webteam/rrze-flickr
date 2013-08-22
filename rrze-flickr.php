@@ -151,15 +151,12 @@ class RRZE_Flickr {
     
     public static function register_plugin_styles() {
         wp_register_style( 'rrze-flickr', sprintf( '%scss/rrze-flickr.css', plugin_dir_url( __FILE__ ) ) );
-        add_filter('register_lightbox', '__return_true');
     }
     
     public static function flickr_shortcode($atts) {
         wp_enqueue_style( 'rrze-flickr' );
-        wp_enqueue_style( 'jquery.lightbox' );
-        wp_enqueue_script( 'jquery.lightbox' );
-        wp_enqueue_script( 'jquery.touchwipe' );
-               
+        do_action('enqueue_lightbox');
+        
         extract( shortcode_atts( array(
                 'screen_name' => '',
                 'tags' => '',
@@ -258,10 +255,8 @@ class RRZE_Flickr_Widget extends WP_Widget {
 		echo $before_widget;
 
 		wp_enqueue_style( 'rrze-flickr-widget' );
-        wp_enqueue_style( 'jquery.lightbox' );
-        wp_enqueue_script( 'jquery.lightbox' );
-        wp_enqueue_script( 'jquery.touchwipe' );
-		
+		do_action('enqueue_lightbox');
+        
 		if($title)
 			echo $before_title.$title.$after_title;
 		
