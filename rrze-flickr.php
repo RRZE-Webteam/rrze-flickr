@@ -2,7 +2,7 @@
 /**
  * Plugin Name: RRZE-Flickr
  * Description: Widget und Shortcode für Flickr.
- * Version: 1.0
+ * Version: 1.1
  * Author: Rolf v. d. Forst
  * Author URI: http://blogs.fau.de/webworking/
  * License: GPLv2 or later
@@ -29,7 +29,7 @@ add_action( 'plugins_loaded', array( 'RRZE_Flickr', 'plugins_loaded' ) );
 register_activation_hook( __FILE__, array( 'RRZE_Flickr', 'activation' ) );
 
 class RRZE_Flickr {
-    const version = '1.0'; // Plugin-Version
+    const version = '1.1'; // Plugin-Version
 
     const option_name = '_rrze_flickr';
 
@@ -161,55 +161,76 @@ class RRZE_Flickr {
                 'screen_name' => '',
                 'tags' => '',
                 'number' => 6,
+                'cache' => 30,
                 'size' => 'm'
             ), $atts ) );  
         
-        return self::get_photos('flickr-photos', $screen_name, $tags, $number, $size);
+        return self::get_photos('flickr-photos', $screen_name, $tags, $number, $cache, $size);
     }
     
     public static function widgets_init() {
         register_widget('RRZE_Flickr_Widget');
     }
     
-    public static function get_photos($class, $screen_name = '', $tags = '', $number = 0, $size = 's') {
+    public static function get_photos($class, $screen_name = '', $tags = '', $number = 6, $cache = 30, $size = 's') {
         $api_key = self::get_options('api_key');
 
+		$number = absint($number);
+        $number = $number > 0 ? $number : 6;
+		$cache = absint($cache);
+        $cache = $cache > 0 ? $cache : 30;
         $size = in_array($size, array('s', 'm')) ? $size : 's';
         
-        if($api_key) {
-            
-            $user_id_str = '';
-            $tags_str = '';
+        if($api_key) {           
+            $user_id = '';
+            $user_id_query = '';
+            $tags_query = '';
             
             if($screen_name) {
-                $user = wp_remote_get('http://api.flickr.com/services/rest/?method=flickr.people.findByUsername&api_key='.$api_key.'&username='.$screen_name.'&format=json');
-                $user = trim($user['body'], 'jsonFlickrApi()');
-                $user = json_decode($user);     
-                if(!empty($user->user->id))
-                    $user_id_str = sprintf('&user_id=%s', $user->user->id);
+                
+                $api_method = 'flickr.people.findByUsername';    
+                $api_url = sprintf('http://api.flickr.com/services/rest/?method=%1$s&api_key=%2$s&username=%3$s&format=json', $api_method, $api_key, $screen_name);
+                
+                $json = wp_remote_get($api_url);
+                $flickr_data = json_decode(trim($json['body'], 'jsonFlickrApi()'));
+
+                if(!empty($flickr_data->user->id))
+                    $user_id = $flickr_data->user->id;
+                
             }
 
+            if($user_id)
+                $user_id_query = sprintf('&user_id=%s', $user_id);
+
             if($tags)
-                $tags_str = sprintf('&tags=%s', $tags);
+                $tags_query = sprintf('&tags=%s', $tags);
+            
+            $api_method = 'flickr.photos.search';
+            $api_url = sprintf('http://api.flickr.com/services/rest/?method=%1$s&api_key=%2$s%3$s%4$s&per_page=%5$s&format=json&nojsoncallback=1', $api_method, $api_key, $user_id_query, $tags_query, $number);            
+            
+            $transient = sprintf('%1$s-%2$s%3$s%4$s', $api_method, $user_id, $tags, $number);
+            $flickr_data = get_transient($transient);
 
-            $api_url = sprintf('http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=%1$s%2$s%3$s&per_page=%4$s&format=json&nojsoncallback=1', $api_key, $user_id_str, $tags_str, $number);
-            $photos = wp_remote_get($api_url);
-            $photos = trim($photos['body'], 'jsonFlickrApi()');
-            $photos = json_decode($photos);
+            if($flickr_data === false) {
+                $json = wp_remote_get($api_url);
+                $flickr_data = json_decode(trim($json['body'], 'jsonFlickrApi()'));
 
-            if(!empty($photos->photos->total)) {
+                set_transient($transient, $flickr_data, $cache * 60);
+            }
+            
+            if(!empty($flickr_data->photos->total)) {
                 $output = '';
                 $output .= '<div class="' . $class . '">';
                 $output .= '<ul>';
-                    foreach($photos->photos->photo as $photo) { 
-                        $photo = (array) $photo;
-                        $url = "http://farm" . $photo['farm'] . ".static.flickr.com/" . $photo['server'] . "/" . $photo['id'] . "_" . $photo['secret'];
-                        $output .= '<li>';
-                            $output .= '<a href="' . $url . '_b.jpg" rel="lightbox">';
-                                $output .= '<img src="' . $url . '_' . $size . '.jpg" alt="' . $photo['title'] . '" />';
-                            $output .= '</a>';
-                        $output .= '</li>';
-                    }
+                foreach($flickr_data->photos->photo as $photo) { 
+                    $photo = (array) $photo;
+                    $url = "http://farm" . $photo['farm'] . ".static.flickr.com/" . $photo['server'] . "/" . $photo['id'] . "_" . $photo['secret'];
+                    $output .= '<li>';
+                        $output .= '<a href="' . $url . '_b.jpg" rel="lightbox">';
+                            $output .= '<img src="' . $url . '_' . $size . '.jpg" alt="' . $photo['title'] . '" />';
+                        $output .= '</a>';
+                    $output .= '</li>';
+                }
                 $output .= '</ul>';
                 $output .= '</div>';
             } else {
@@ -251,6 +272,7 @@ class RRZE_Flickr_Widget extends WP_Widget {
 		$screen_name = $instance['screen_name'];
         $tags = $instance['tags'];
 		$number = $instance['number'];
+        $cache = $instance['cache'];
 		
 		echo $before_widget;
 
@@ -260,7 +282,7 @@ class RRZE_Flickr_Widget extends WP_Widget {
 		if($title)
 			echo $before_title.$title.$after_title;
 		
-        echo RRZE_Flickr::get_photos('flickr-widget', $screen_name, $tags, $number);
+        echo RRZE_Flickr::get_photos('flickr-widget', $screen_name, $tags, $number, $cache);
         
 		echo $after_widget;
 		
@@ -271,8 +293,10 @@ class RRZE_Flickr_Widget extends WP_Widget {
 		$instance['title'] = strip_tags($new_instance['title']);
         $instance['screen_name'] = strip_tags($new_instance['screen_name']);
         $instance['tags'] = strip_tags($new_instance['tags']);
-		$number = (int) $new_instance['number'];
-        $instance['number'] = !empty($number) ? $number : 6;
+		$number = absint($new_instance['number']);
+        $instance['number'] = $number > 0 ? $number : 6;
+		$cache = absint($new_instance['cache']);
+        $instance['cache'] = $cache > 0 ? $cache : 30;
         
 		return $instance;
 		
@@ -282,7 +306,8 @@ class RRZE_Flickr_Widget extends WP_Widget {
 		$title = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
         $screen_name = isset( $instance['screen_name'] ) ? esc_attr( $instance['screen_name'] ) : '';
         $tags = isset( $instance['tags'] ) ? esc_attr( $instance['tags'] ) : '';
-		$number = isset( $instance['number'] ) ? absint( $instance['number'] ) : 6;	
+		$number = isset( $instance['number'] ) ? absint( $instance['number'] ) : 6;
+        $cache = isset( $instance['cache'] ) ? absint( $instance['cache'] ) : 30;
 		?>
 		<p>
             <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Titel:', RRZE_Flickr::textdomain ); ?></label>
@@ -305,6 +330,10 @@ class RRZE_Flickr_Widget extends WP_Widget {
             <input id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="text" value="<?php echo $number; ?>" size="3" />
         </p>
         
+		<p>
+            <label for="<?php echo $this->get_field_id( 'cache' ); ?>"><?php _e( 'Cache (in Minuten): ', RRZE_Flickr::textdomain ); ?></label>
+            <input id="<?php echo $this->get_field_id( 'cache' ); ?>" name="<?php echo $this->get_field_name( 'cache' ); ?>" type="text" value="<?php echo $cache; ?>" size="3" />
+        </p>        
         <?php
 		
 	}
