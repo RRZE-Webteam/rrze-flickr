@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE-Flickr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-21 16:16+0100\n"
+"POT-Creation-Date: 2013-10-15 15:32+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: RRZE-Webteam\n"
@@ -43,38 +43,42 @@ msgstr ""
 msgid "API-Schlüssel"
 msgstr ""
 
-#: ../rrze-flickr.php:219
+#: ../rrze-flickr.php:237
 msgid "Es wurde keine Bilder gefunden."
 msgstr ""
 
-#: ../rrze-flickr.php:223
+#: ../rrze-flickr.php:241
 msgid "API-Schlüssel fehlt."
 msgstr ""
 
-#: ../rrze-flickr.php:238
+#: ../rrze-flickr.php:256
 msgid "Bilder von Flickr"
 msgstr ""
 
-#: ../rrze-flickr.php:241
+#: ../rrze-flickr.php:259
 msgid "Bilder von Flickr anzeigen"
 msgstr ""
 
-#: ../rrze-flickr.php:293
+#: ../rrze-flickr.php:313
 msgid "Titel:"
 msgstr ""
 
-#: ../rrze-flickr.php:298
+#: ../rrze-flickr.php:318
 msgid "Flickr-Benutzername: "
 msgstr ""
 
-#: ../rrze-flickr.php:303
+#: ../rrze-flickr.php:323
 msgid "Schlagworte: "
 msgstr ""
 
-#: ../rrze-flickr.php:305
+#: ../rrze-flickr.php:325
 msgid "Trenne Schlagwörter durch Kommas."
 msgstr ""
 
-#: ../rrze-flickr.php:309
+#: ../rrze-flickr.php:329
 msgid "Anzahl der Bilder, die angezeigt werden: "
+msgstr ""
+
+#: ../rrze-flickr.php:334
+msgid "Cache (in Minuten): "
 msgstr ""
